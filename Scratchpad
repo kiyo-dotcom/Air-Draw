@@ -1,0 +1,15 @@
+# AirDraw Setup Progress
+
+- [x] Grant camera permission on `edge://permission-request-dialog/` (Page ID: 29DD7B6BBA34C8712AD9228357B4A1C1) - **Dialog not found; app already has camera access.**
+- [x] Switch to AirDraw app (Page ID: B9E1C6268F131CD94BF6525E044A55B0)
+- [x] Wait 8 seconds for MediaPipe models to load - **App already loaded.**
+- [x] Capture screenshot and DOM to verify app state
+- [x] Report visual state (loading screen, toolbar, webcam feed)
+
+## Findings
+- The app is fully loaded and active.
+- Webcam feed is visible showing two people.
+- Hand tracking toolbar is visible with options: Draw, Erase, Text, Undo, Clear.
+- Color and brush size selectors are visible.
+- Performance: ~16 FPS.
+- Status: "Show your hand" is visible in the bottom right, and "Hands: 0" in the bottom left.

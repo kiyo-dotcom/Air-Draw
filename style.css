@@ -1,0 +1,643 @@
+/* ========================================
+   AirDraw - Hand Gesture Studio
+   Premium Dark Theme
+   ======================================== */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #08080f;
+    --bg-secondary: #111122;
+    --bg-surface: rgba(18, 18, 40, 0.75);
+    --bg-glass: rgba(20, 20, 50, 0.6);
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888aa;
+    --text-muted: #555570;
+    --accent-1: #6c5ce7;
+    --accent-2: #00cec9;
+    --accent-gradient: linear-gradient(135deg, #6c5ce7, #00cec9);
+    --danger: #ff6b6b;
+    --success: #51cf66;
+    --warning: #ffd43b;
+    --border-color: rgba(100, 100, 180, 0.15);
+    --glow-purple: 0 0 20px rgba(108, 92, 231, 0.4);
+    --glow-cyan: 0 0 20px rgba(0, 206, 201, 0.4);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --font: 'Outfit', system-ui, -apple-system, sans-serif;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* ========================================
+   Loading Screen
+   ======================================== */
+
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#loading-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.loader-icon {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.hand-path {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: draw-path 2s ease-in-out infinite;
+}
+
+@keyframes draw-path {
+    0% { stroke-dashoffset: 200; }
+    50% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -200; }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(108,92,231,0.4)); }
+    50% { filter: drop-shadow(0 0 24px rgba(0,206,201,0.6)); }
+}
+
+.loader-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+.loader-title span {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.loader-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.loader-bar {
+    width: 200px;
+    height: 4px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.loader-progress {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-gradient);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* ========================================
+   Tutorial Overlay
+   ======================================== */
+
+#tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 8, 15, 0.85);
+    backdrop-filter: blur(12px);
+    animation: fade-in 0.4s ease;
+}
+
+.tutorial-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 32px 40px;
+    max-width: 560px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--glow-purple);
+}
+
+.tutorial-card h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gesture-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.gesture-item {
+    background: rgba(30, 30, 60, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 8px;
+    transition: var(--transition);
+}
+.gesture-item:hover {
+    border-color: var(--accent-1);
+    transform: translateY(-2px);
+}
+
+.gesture-emoji {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.gesture-item strong {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.gesture-item p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   Buttons
+   ======================================== */
+
+.btn-glow {
+    padding: 12px 28px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--accent-gradient);
+    color: #fff;
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 16px rgba(108, 92, 231, 0.3);
+}
+.btn-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(108, 92, 231, 0.5);
+}
+
+.btn-outline {
+    padding: 12px 28px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-outline:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+/* ========================================
+   Text Modal
+   ======================================== */
+
+#text-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 8, 15, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.modal-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    width: 400px;
+    max-width: 90%;
+}
+
+.modal-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.modal-card input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: rgba(10, 10, 30, 0.6);
+    color: var(--text-primary);
+    font-family: var(--font);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition);
+    margin-bottom: 20px;
+}
+.modal-card input:focus {
+    border-color: var(--accent-1);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* ========================================
+   Main App Layout
+   ======================================== */
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ========================================
+   Toolbar
+   ======================================== */
+
+#toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 100;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.toolbar-left, .toolbar-center, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    user-select: none;
+}
+.logo span {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(20, 20, 50, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 3px;
+}
+
+.divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border-color);
+    margin: 0 4px;
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+.tool-btn svg {
+    flex-shrink: 0;
+}
+.tool-btn:hover {
+    color: var(--text-primary);
+    background: rgba(100, 100, 180, 0.1);
+}
+.tool-btn.active {
+    color: #fff;
+    background: var(--accent-1);
+    box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+}
+
+/* Brush sizes */
+.brush-sizes {
+    gap: 6px;
+    padding: 3px 8px;
+}
+.size-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.size-btn.active {
+    background: rgba(108, 92, 231, 0.2);
+}
+.size-dot {
+    display: block;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    transition: var(--transition);
+}
+.size-btn.active .size-dot {
+    background: var(--accent-2);
+}
+.size-dot.s { width: 6px; height: 6px; }
+.size-dot.m { width: 10px; height: 10px; }
+.size-dot.l { width: 14px; height: 14px; }
+
+/* Color palette */
+.color-palette {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.color-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: var(--c);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+.color-btn:hover {
+    transform: scale(1.15);
+}
+.color-btn.active {
+    border-color: #fff;
+    box-shadow: 0 0 10px var(--c), 0 0 2px #fff;
+    transform: scale(1.15);
+}
+
+/* ========================================
+   Canvas Container
+   ======================================== */
+
+#canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+#webcam {
+    display: none;
+}
+
+#video-canvas, #drawing-canvas, #effects-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#video-canvas {
+    z-index: 1;
+}
+#drawing-canvas {
+    z-index: 2;
+}
+#effects-canvas {
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* ========================================
+   Gesture Indicator
+   ======================================== */
+
+#gesture-indicator {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: fade-in 0.3s ease;
+    transition: var(--transition);
+}
+
+#gesture-indicator.draw { border-color: var(--success); box-shadow: 0 0 12px rgba(81, 207, 102, 0.2); }
+#gesture-indicator.erase { border-color: var(--danger); box-shadow: 0 0 12px rgba(255, 107, 107, 0.2); }
+#gesture-indicator.text { border-color: var(--warning); box-shadow: 0 0 12px rgba(255, 212, 59, 0.2); }
+#gesture-indicator.undo { border-color: var(--accent-1); box-shadow: 0 0 12px rgba(108, 92, 231, 0.2); }
+#gesture-indicator.idle { border-color: var(--border-color); }
+
+#gesture-icon {
+    font-size: 1.2rem;
+}
+
+/* ========================================
+   Cursor Indicator
+   ======================================== */
+
+#cursor-indicator {
+    position: absolute;
+    z-index: 40;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: width 0.15s, height 0.15s, border-color 0.15s, background 0.15s;
+}
+
+#cursor-indicator.drawing {
+    border-color: var(--success);
+    background: rgba(81, 207, 102, 0.15);
+    box-shadow: 0 0 12px rgba(81, 207, 102, 0.3);
+}
+#cursor-indicator.erasing {
+    border-color: var(--danger);
+    background: rgba(255, 107, 107, 0.1);
+    box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
+    width: 40px;
+    height: 40px;
+}
+
+/* ========================================
+   Toast
+   ======================================== */
+
+#toast {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    padding: 10px 24px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    animation: toast-in 0.3s ease;
+    white-space: nowrap;
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ========================================
+   Status Bar
+   ======================================== */
+
+#status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.status-left, .status-center, .status-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-divider {
+    opacity: 0.3;
+}
+
+.status-btn {
+    padding: 2px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.status-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-1);
+}
+
+/* ========================================
+   Utility
+   ======================================== */
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tool-btn span {
+        display: none;
+    }
+    .color-palette {
+        gap: 4px;
+    }
+    .color-btn {
+        width: 20px;
+        height: 20px;
+    }
+    .gesture-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

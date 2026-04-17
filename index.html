@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AirDraw - Hand Gesture Studio. Draw, erase, and interact using just your hands.">
+    <title>AirDraw — Hand Gesture Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="loader-icon">
+                <svg viewBox="0 0 100 100" width="80" height="80">
+                    <path class="hand-path" d="M50 90 C50 90 20 60 20 40 C20 25 30 15 40 15 C45 15 48 18 50 22 C52 18 55 15 60 15 C70 15 80 25 80 40 C80 60 50 90 50 90Z" fill="none" stroke="url(#grad)" stroke-width="2"/>
+                    <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6c5ce7"/><stop offset="100%" style="stop-color:#00cec9"/></linearGradient></defs>
+                </svg>
+            </div>
+            <h2 class="loader-title">Air<span>Draw</span></h2>
+            <p class="loader-text">Initializing hand tracking...</p>
+            <div class="loader-bar"><div class="loader-progress" id="load-progress"></div></div>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="hidden">
+        <div class="tutorial-card">
+            <h2>✋ Gesture Guide</h2>
+            <div class="gesture-grid">
+                <div class="gesture-item"><span class="gesture-emoji">☝️</span><strong>Index Finger</strong><p>Draw on canvas</p></div>
+                <div class="gesture-item"><span class="gesture-emoji">✌️</span><strong>Two Fingers</strong><p>Erase strokes</p></div>
+                <div class="gesture-item"><span class="gesture-emoji">🤟</span><strong>Three Fingers</strong><p>Undo last action</p></div>
+                <div class="gesture-item"><span class="gesture-emoji">🤌</span><strong>Pinch</strong><p>Place text</p></div>
+                <div class="gesture-item"><span class="gesture-emoji">✋</span><strong>Open Palm</strong><p>Hover / Pause</p></div>
+                <div class="gesture-item"><span class="gesture-emoji">🤜🤛</span><strong>Two Hands</strong><p>Iron Man FX</p></div>
+            </div>
+            <button id="tutorial-close" class="btn-glow">Got it, let's draw!</button>
+        </div>
+    </div>
+
+    <!-- Text Input Modal -->
+    <div id="text-modal" class="hidden">
+        <div class="modal-card">
+            <h3>Add Text</h3>
+            <input type="text" id="text-input" placeholder="Type your text..." maxlength="50" autocomplete="off">
+            <div class="modal-actions">
+                <button id="text-cancel" class="btn-outline">Cancel</button>
+                <button id="text-confirm" class="btn-glow">Place Text ☝️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app">
+        <!-- Header Toolbar -->
+        <header id="toolbar">
+            <div class="toolbar-left">
+                <div class="logo">Air<span>Draw</span></div>
+            </div>
+            <div class="toolbar-center">
+                <div class="tool-group">
+                    <button class="tool-btn active" data-tool="draw" title="Draw (Index finger)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
+                        <span>Draw</span>
+                    </button>
+                    <button class="tool-btn" data-tool="erase" title="Erase (Two fingers)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16l7-7 10 10z"/><path d="m6.5 13.5 5-5"/></svg>
+                        <span>Erase</span>
+                    </button>
+                    <button class="tool-btn" data-tool="text" title="Add Text">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                        <span>Text</span>
+                    </button>
+                </div>
+                <div class="divider"></div>
+                <div class="tool-group">
+                    <button class="tool-btn" id="undo-btn" title="Undo">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        <span>Undo</span>
+                    </button>
+                    <button class="tool-btn" id="clear-btn" title="Clear Canvas">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <span>Clear</span>
+                    </button>
+                </div>
+                <div class="divider"></div>
+                <!-- Brush Size -->
+                <div class="tool-group brush-sizes">
+                    <button class="size-btn active" data-size="3" title="Small"><span class="size-dot s"></span></button>
+                    <button class="size-btn" data-size="8" title="Medium"><span class="size-dot m"></span></button>
+                    <button class="size-btn" data-size="15" title="Large"><span class="size-dot l"></span></button>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <!-- Color Palette -->
+                <div class="color-palette" id="color-palette">
+                    <button class="color-btn active" data-color="#ffffff" style="--c:#ffffff" title="White"></button>
+                    <button class="color-btn" data-color="#ff6b6b" style="--c:#ff6b6b" title="Red"></button>
+                    <button class="color-btn" data-color="#ffa502" style="--c:#ffa502" title="Orange"></button>
+                    <button class="color-btn" data-color="#ffd43b" style="--c:#ffd43b" title="Yellow"></button>
+                    <button class="color-btn" data-color="#51cf66" style="--c:#51cf66" title="Green"></button>
+                    <button class="color-btn" data-color="#22b8cf" style="--c:#22b8cf" title="Cyan"></button>
+                    <button class="color-btn" data-color="#5c7cfa" style="--c:#5c7cfa" title="Blue"></button>
+                    <button class="color-btn" data-color="#cc5de8" style="--c:#cc5de8" title="Purple"></button>
+                    <button class="color-btn" data-color="#f06595" style="--c:#f06595" title="Pink"></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Canvas Area -->
+        <div id="canvas-container">
+            <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="video-canvas"></canvas>
+            <canvas id="drawing-canvas"></canvas>
+            <canvas id="effects-canvas"></canvas>
+
+            <!-- Gesture Indicator -->
+            <div id="gesture-indicator" class="hidden">
+                <span id="gesture-icon">☝️</span>
+                <span id="gesture-label">Draw</span>
+            </div>
+
+            <!-- Cursor Indicator -->
+            <div id="cursor-indicator" class="hidden"></div>
+
+            <!-- Toast Notifications -->
+            <div id="toast" class="hidden"></div>
+        </div>
+
+        <!-- Status Bar -->
+        <footer id="status-bar">
+            <div class="status-left">
+                <span id="fps-counter">FPS: --</span>
+                <span class="status-divider">|</span>
+                <span id="hands-count">Hands: 0</span>
+            </div>
+            <div class="status-center">
+                <button id="help-btn" class="status-btn" title="Show gesture guide">? Help</button>
+            </div>
+            <div class="status-right">
+                <span id="gesture-status">Waiting for camera...</span>
+            </div>
+        </footer>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"
+        }
+    }
+    </script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
